@@ -10,7 +10,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 num_classes = 31
 def train(classifier):
-    # 根据发票版本数量调整
+    
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(classifier.parameters(), lr=0.001)
@@ -49,7 +49,6 @@ def main():
 
 
 
-# 按间距中的绿色按钮以运行脚本。
 if __name__ == '__main__':
     main()
 
