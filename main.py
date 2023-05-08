@@ -33,13 +33,13 @@ def main():
 
   model = init_model(net.InvoiceClassifier(num_classes).to(device), restore=None)
   model_new = train(model)
-  model.eval()
+  model_new.eval()
   correct = 0
   total = 0
   with torch.no_grad():
       for images, labels in test_loader:
           images, labels = images.to(device), labels.to(device)
-          outputs = model(images)
+          outputs = model_new(images)
           _, predicted = torch.max(outputs.data, 1)
           total += labels.size(0)
           correct += (predicted == labels).sum().item()
