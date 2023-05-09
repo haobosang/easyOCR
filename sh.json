@@ -1,0 +1,193 @@
+{
+    "data": [
+        {
+            "block": 2,
+            "height": 32,
+            "left": 88,
+            "line": 1,
+            "page": 1,
+            "text": "株式会社サンプルC支社",
+            "top": 250,
+            "width": 269,
+            "word": 1
+        },
+        {
+            "block": 2,
+            "height": 31,
+            "left": 89,
+            "line": 2,
+            "page": 1,
+            "text": "営業部担当者:へへロロ様",
+            "top": 282,
+            "width": 288,
+            "word": 1
+        },
+        {
+            "block": 3,
+            "height": 18,
+            "left": 89,
+            "line": 1,
+            "page": 1,
+            "text": "下記",
+            "top": 328,
+            "width": 155,
+            "word": 1
+        },
+        {
+            "block": 3,
+            "height": 23,
+            "left": 119,
+            "line": 1,
+            "page": 1,
+            "text": "の通りご請求申し上げます。",
+            "top": 324,
+            "width": 219,
+            "word": 2
+        },
+        {
+            "block": 4,
+            "height": 23,
+            "left": 114,
+            "line": 1,
+            "page": 1,
+            "text": "商品名/品目",
+            "top": 468,
+            "width": 148,
+            "word": 1
+        },
+        {
+            "block": 5,
+            "height": 16,
+            "left": 94,
+            "line": 1,
+            "page": 1,
+            "text": "OOOOOOサンプルタイA",
+            "top": 513,
+            "width": 295,
+            "word": 1
+        },
+        {
+            "block": 5,
+            "height": 29,
+            "left": 622,
+            "line": 1,
+            "page": 1,
+            "text": "個数",
+            "top": 508,
+            "width": 36,
+            "word": 8
+        },
+        {
+            "block": 5,
+            "height": 18,
+            "left": 95,
+            "line": 2,
+            "page": 1,
+            "text": "へへムへシステム機器(自動調整タイプ)",
+            "top": 547,
+            "width": 361,
+            "word": 1
+        },
+        {
+            "block": 5,
+            "height": 16,
+            "left": 604,
+            "line": 2,
+            "page": 1,
+            "text": "2台",
+            "top": 545,
+            "width": 35,
+            "word": 15
+        },
+        {
+            "block": 5,
+            "height": 17,
+            "left": 96,
+            "line": 3,
+            "page": 1,
+            "text": "へへシステム",
+            "top": 579,
+            "width": 259,
+            "word": 1
+        },
+        {
+            "block": 5,
+            "height": 30,
+            "left": 244,
+            "line": 3,
+            "page": 1,
+            "text": "の取付作業",
+            "top": 574,
+            "width": 113,
+            "word": 8
+        },
+        {
+            "block": 5,
+            "height": 16,
+            "left": 604,
+            "line": 3,
+            "page": 1,
+            "text": "3X",
+            "top": 578,
+            "width": 35,
+            "word": 11
+        },
+        {
+            "block": 5,
+            "height": 16,
+            "left": 97,
+            "line": 4,
+            "page": 1,
+            "text": "へへへへシステム",
+            "top": 612,
+            "width": 258,
+            "word": 1
+        },
+        {
+            "block": 5,
+            "height": 30,
+            "left": 243,
+            "line": 4,
+            "page": 1,
+            "text": "の操作説明講習会",
+            "top": 606,
+            "width": 190,
+            "word": 8
+        },
+        {
+            "block": 5,
+            "height": 29,
+            "left": 583,
+            "line": 4,
+            "page": 1,
+            "text": "40個数",
+            "top": 606,
+            "width": 78,
+            "word": 13
+        },
+        {
+            "block": 5,
+            "height": 15,
+            "left": 97,
+            "line": 5,
+            "page": 1,
+            "text": "ロロ",
+            "top": 645,
+            "width": 47,
+            "word": 1
+        },
+        {
+            "block": 5,
+            "height": 26,
+            "left": 246,
+            "line": 5,
+            "page": 1,
+            "text": "素材(XXを含む)|50Kg",
+            "top": 643,
+            "width": 397,
+            "word": 3
+        }
+    ],
+    "message": "OK",
+    "success": true
+}
