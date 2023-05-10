@@ -5,8 +5,9 @@ import random
 from datetime import datetime
 fake = Faker('ja_JP')
 #generator = fake.generator
-data = []
-for i in range(5):
+
+for i in range(20):
+    data = []
 
     company = fake.company()
     name = fake.name()
@@ -38,7 +39,7 @@ for i in range(5):
         "left": 1083,
         "line": 1,
         "page": 1,
-        "text": "    No. :"+phone_number,
+        "text": "    No. : "+phone_number,
         "top": 160,
         "width": 320,
         "word": 1,
@@ -52,7 +53,7 @@ for i in range(5):
         "left": 1083,
         "line": 1,
         "page": 1,
-        "text": "請求日 :    "+formatted_date,
+        "text": "請求日 : "+formatted_date,
         "top": 195,
         "width": 320,
         "word": 1,
@@ -143,7 +144,7 @@ for i in range(5):
         "word": 1,
         "fontsize": 24,
         "fontcolor": "#FFFFFF",
-        "backcolor": "#2F4097"
+        "backcolor": "#2F5495"
     })
 
     data.append({
@@ -328,48 +329,7 @@ for i in range(5):
         "fontcolor": "#000000",
         "backcolor": "#FFFFFF"
     })
-    data.append({
-        "block": 5,
-        "height": 30,
-        "left": 1200,
-        "line": 5,
-        "page": 1,
-        "text": amount-amount*0.1,
-        "top": 1745,
-        "width": 200,
-        "word": 3,
-        "fontsize": 22,
-        "fontcolor": "#000000",
-        "backcolor": "#FFFFFF"
-    })
-    data.append({
-        "block": 5,
-        "height": 30,
-        "left": 1200,
-        "line": 5,
-        "page": 1,
-        "text": amount*0.1,
-        "top": 1790,
-        "width": 200,
-        "word": 3,
-        "fontsize": 22,
-        "fontcolor": "#000000",
-        "backcolor": "#FFFFFF"
-    })
-    data.append({
-        "block": 5,
-        "height": 30,
-        "left": 1200,
-        "line": 5,
-        "page": 1,
-        "text": amount,
-        "top": 1830,
-        "width": 200,
-        "word": 3,
-        "fontsize": 22,
-        "fontcolor": "#000000",
-        "backcolor": "#FFFFFF"
-    })
+
 
 
 
