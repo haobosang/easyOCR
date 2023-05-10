@@ -1,12 +1,11 @@
-import random
-from faker import Faker
 from PIL import Image, ImageDraw, ImageFont
 import json
 
 
 def main():
-    # 创建画布
-    img = Image.open('.\\img\\2.png')
+    # 创建背板
+    img_name = "2"
+    img = Image.open(f".\\img\\{img_name}.png")
     draw = ImageDraw.Draw(img)
 
     # 获取假数据
@@ -18,7 +17,6 @@ def main():
             # 添加标题
             font = ImageFont.truetype('meiryo.ttc', size=fd["fontsize"], encoding='Shift_JIS')
             text = fd["text"]
-            # text_width, text_height = draw.textsize(text, font=font)
             left = fd["left"]
             top = fd["top"]
             width = fd["width"]
@@ -27,7 +25,7 @@ def main():
             draw.text((left, top), text, font=font, fill=fd["fontcolor"])
 
         # 保存图片
-        img.save('invoice.png')
+        img.save(f'faker{img_name}.png')
 
 
 if __name__ == '__main__':
