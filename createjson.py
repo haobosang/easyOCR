@@ -379,7 +379,7 @@ for i in range(5):
         "success": True
     }
     #print(json_data)
-    file_path = "/home/ubuntu/testjson/data"+str(i)+".json"
+    file_path = "./tmp/data"+str(i)+".json"
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
     with open(file_path, 'w') as f:
         json.dump(json_data, f)
