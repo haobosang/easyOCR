@@ -1,4 +1,6 @@
+import csv
 import os.path
+import glob
 
 from PIL import Image, ImageDraw, ImageFont
 import json
@@ -6,14 +8,15 @@ import json
 
 def main():
     # 获取假数据
-    json_dir = os.path.join("./tmp")
-    for json_file in os.listdir(json_dir):
+    json_dir = glob.glob(".\\fakeLabel\\*.json")
+    for json_file in json_dir:
         # 创建背板
-        img = Image.open("./img/2.png")
-        draw = ImageDraw.Draw(img)
+        template = Image.open(".\\img\\2.png")
+        draw = ImageDraw.Draw(template)
 
+        print(f"Loaded {json_file}")
         j_name = json_file.split('\\')[-1].split('.')[0]
-        with open(f'tmp/{j_name}.json', 'r', encoding="utf-8") as file:
+        with open(f'fakeLabel/{j_name}.json', 'r', encoding="utf-8") as file:
             fstr = file.read()
             fakeData = json.loads(fstr)
             data = fakeData["data"]
@@ -28,9 +31,17 @@ def main():
                 draw.rectangle(xy=[left, top, left + width, top + height], fill=fd["backcolor"])
                 draw.text((left, top), text, font=font, fill=fd["fontcolor"])
 
-            # 保存图片
-            img.save(f'./fakeImage/{j_name}.png')
+            # 保存图片, 这里可以使用 csv 中 image_name 域获取字符串
+            img_name = j_name.replace("label", "image")
+            print(f'Generated ./fakeImage/{img_name}.png !\n')
+            template.save(f'./fakeImage/{img_name}.png')
+
+            file.close()
+
+        template.close()
 
 
 if __name__ == '__main__':
     main()
+
+
