@@ -216,11 +216,11 @@ def createjson(textnumber=20):
             json.dump(json_data, f)
 
 
-def createcsv():
+def createcsv(textnumber=20):
     csv_file_path = "./fakeLabel/data.csv"
-    fieldnames = ["left", "top", "right", "bottom", "text"]
+    fieldnames = ["filename","left", "top", "right", "bottom", "text"]
     data_list = []
-    for i in range(20):
+    for i in range(textnumber):
         json_file_path = f"./tmp/data{i}.json"
         with open(json_file_path, "r") as f:
             json_data = json.load(f)
@@ -230,7 +230,8 @@ def createcsv():
                 right = left + item["width"]
                 bottom = top + item["height"]
                 text = item["text"]
-                data_list.append({"left": left, "top": top, "right": right, "bottom": bottom, "text": text})
+                filename = "image"+str(i)+".jpg"
+                data_list.append({"filename":filename,"left": left, "top": top, "right": right, "bottom": bottom, "text": text})
 
     with open(csv_file_path, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -240,4 +241,6 @@ def createcsv():
 
 
 if __name__ == '__main__':
-    createjson(20)
+    filennumber = 20
+    createjson(filennumber)
+    createcsv(filennumber)
