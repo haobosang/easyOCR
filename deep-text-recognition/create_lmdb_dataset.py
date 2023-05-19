@@ -1,4 +1,5 @@
 """ a modified version of CRNN torch repository https://github.com/bgshih/crnn/blob/master/tool/create_dataset.py """
+import csv
 
 import fire
 import os
@@ -6,6 +7,7 @@ import lmdb
 import cv2
 
 import numpy as np
+from PIL import Image
 
 
 def checkImageIsValid(imageBin):
@@ -83,5 +85,47 @@ def createDataset(inputPath, gtFile, outputPath, checkValid=True):
     print('Created dataset with %d samples' % nSamples)
 
 
+def InvoiceDataset(root="~/pm"):
+    """
+    这个模块用于实现单张图片文本分块，用于训练模型前的数据加载。
+
+    作者：潘锰
+    日期：2023-05-18
+
+    :param root project root dir
+    """
+    gts_list = []
+    fieldnames = ["image_name", "left", "top", "right", "bottom", "text"]
+    with open("{}/fakeLabel/label.csv".format(root), "r", newline="", encoding="Shift_JIS") as f:
+        reader = csv.DictReader(f, fieldnames=fieldnames)
+        for i, row in enumerate(reader):
+            if i > 0:
+                gts_list.append(row)  # row 为字典
+        f.close()
+
+    nSamples = len(gts_list)
+
+    label_list = []
+    for index in range(nSamples):
+        data = dict(gts_list[index])
+        image_name = data["image_name"]
+        left = int(data["left"])
+        top = int(data["top"])
+        right = int(data["right"])
+        bottom = int(data["bottom"])
+        text = data["text"]
+
+        img = Image.open("{}/fakeImage/{}.png".format(root, image_name)).convert('RGB')
+        img_block = img.crop((left, top, right, bottom))
+
+        img_block.save("./data/test/word_{:03d}.png".format(index))
+        new_img_name = "test/word_{:03d}.png".format(index)
+        print("{}\t{}".format(new_img_name, text))
+        label_list.append(np.array("{}\t{}".format(new_img_name, text)))
+
+    np.savetxt("./data/gt.txt", np.array(label_list), delimiter=' ', fmt='%s')
+
+
 if __name__ == '__main__':
+    # InvoiceDataset("..")
     fire.Fire(createDataset)
