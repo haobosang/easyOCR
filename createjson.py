@@ -12,6 +12,12 @@ measures = ["個", "台", "箱", "碗", "袋", "款", "セット", "枚", "本",
 
 
 def createjson(textnumber=20):
+    """
+    这个模块用来实现创建 json 文件。
+
+    作者：Haobo Li
+    日期：2023-05-18
+    """
     for num in range(textnumber):
         data = []
         company = fake.company()
@@ -190,6 +196,12 @@ def createjson(textnumber=20):
 
 
 def createcsv(num=20):
+    """
+    这个模块根据生成的 json 文件生成 csv 文件。
+
+    作者：Haobo Li
+    日期：2023-05-18
+    """
     fieldnames = ["image_name", "left", "top", "right", "bottom", "text"]
     data_list = []
     print("Converting to csv: [", end='')

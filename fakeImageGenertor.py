@@ -7,6 +7,12 @@ import json
 
 
 def main():
+    """
+    这个模块用于实现根据 json 文件生成假数据图片。
+
+    作者：Meng Pan
+    日期：2023-05-18
+    """
     # 获取假数据
     json_dir = glob.glob(".\\fakeLabel\\*.json")
     for json_file in json_dir:
@@ -43,5 +49,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
