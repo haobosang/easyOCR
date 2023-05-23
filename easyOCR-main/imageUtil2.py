@@ -21,7 +21,6 @@ def add_background(image, background_path):
         result = cv2.addWeighted(image, 0.7, background, 0.3, 0)
 
     return result
-
 # 定义数据增强操作
 def add_shadow(image):
     # 创建一个与输入图像大小相同的阴影图像
