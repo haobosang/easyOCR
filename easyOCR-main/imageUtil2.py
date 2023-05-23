@@ -1,12 +1,26 @@
 
 
 import os
-
+import cv2
 import glob
 import imageio
 from imgaug import augmenters as iaa
 import imgaug as ia
 
+# 添加一个函数，用于将背景图片调整为与输入图片相同的大小并合并
+def add_background(image, background_path):
+    background = cv2.imread(background_path)  # 读取背景图片
+    background = cv2.resize(background, (image.shape[1], image.shape[0]))  # 将背景图片调整为与输入图片相同的大小
+
+    # 检查输入图片是否有透明通道
+    if image.shape[2] == 4:
+        alpha = image[:, :, 3] / 255.0  # 获取输入图片的透明度
+        result = cv2.addWeighted(image[:, :, :3], alpha, background, 1 - alpha, 0)
+    else:
+        # 如果输入图片没有透明通道，直接将背景图片与输入图片叠加
+        result = cv2.addWeighted(image, 0.7, background, 0.3, 0)
+
+    return result
 
 # 定义数据增强操作
 def add_shadow(image):
@@ -27,11 +41,7 @@ def add_shadow(image):
 
     # 定义数据增强操作
 augmenters = iaa.Sequential([
-    iaa.PiecewiseAffine(scale=(0.01, 0.02)),  # 扭曲
-    iaa.OneOf([
         iaa.GaussianBlur(sigma=(0, 1.0)),  # 高斯模糊
-        iaa.MotionBlur(k=5, angle=[-45, 45])  # 运动模糊
-    ])
 ])
 
 # 指定输入和输出文件夹
@@ -45,44 +55,15 @@ image_files = glob.glob(os.path.join(input_folder, "*.png"))
 
 # 对每个图像进行数据增强并保存到输出文件夹
 for image_file in image_files:
-    image = imageio.imread(image_file)
+    # 读取原始图像
+    image = cv2.imread(image_file, cv2.IMREAD_UNCHANGED)  # 保留透明通道
+    # 对原始图像进行数据增强
     augmented_image = augmenters(image=image)
+    # 添加阴影
     shadow_image = add_shadow(augmented_image)
+    # 添加背景
+    background_path = "./invoice.png"  # 设置背景图片路径
+    final_image = add_background(shadow_image, background_path)
+    # 保存增强后的图像到输出文件夹
     output_file = os.path.join(output_folder, os.path.basename(image_file))
-    imageio.imwrite(output_file, augmented_image)
-
-
-# if not os.path.exists(output_folder):
-#     os.makedirs(output_folder)
-#
-# def apply_transformations(img):
-#     # 随机扭曲图像
-#
-#     transform = ia.PerspectiveTransform(scale=(0.01, 0.1))
-#     img = transform.apply_image(img)
-#
-#     # 随机旋转图像
-#     angle = random.uniform(-30, 30)  # 设置随机旋转角度范围
-#     img = img.rotate(angle, resample=Image.BICUBIC, expand=False)
-#
-#     # 随机应用模糊滤波器
-#     if random.random() > 0.5:
-#         img = img.filter(ImageFilter.GaussianBlur(radius=random.uniform(0.5, 1.5)))
-#
-#     return img
-#
-# for filename in os.listdir(input_folder):
-#     if filename.endswith(".png"):
-#         input_path = os.path.join(input_folder, filename)
-#         output_path = os.path.join(output_folder, filename)
-#
-#         # 读取图像
-#         img = Image.open(input_path)
-#
-#         # 应用数据增强
-#         img_transformed = apply_transformations(img)
-#
-#         # 保存增强后的图像
-#         img_transformed.save(output_path)
-#
-# print("数据增强完成！")
+    cv2.imwrite(output_file, final_image)
