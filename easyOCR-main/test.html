@@ -1,0 +1,55 @@
+<!-- HTML code -->
+<html>
+  <body>
+    <img id="image" src="MicrosoftTeams-imageA.png" style="display:none"/>
+    <canvas id="canvas"></canvas>
+  </body>
+</html>
+
+<script>
+  // JavaScript code
+  const image = document.getElementById("image");
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  let rect = null;
+  let isDrawing = false;
+
+  // Draw image on canvas
+  image.onload = function () {
+    canvas.width = image.width;
+    canvas.height = image.height;
+    ctx.drawImage(image, 0, 0);
+  };
+
+  // Event listeners
+  canvas.addEventListener("mousedown", startDrawing);
+  canvas.addEventListener("mousemove", drawRectangle);
+  canvas.addEventListener("mouseup", endDrawing);
+
+  // Functions
+  function startDrawing(e) {
+    isDrawing = true;
+    rect = {
+      x: e.offsetX,
+      y: e.offsetY,
+      width: 0,
+      height: 0,
+    };
+  }
+
+  function drawRectangle(e) {
+    if (!isDrawing) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(image, 0, 0);
+    rect.width = e.offsetX - rect.x;
+    rect.height = e.offsetY - rect.y;
+    ctx.strokeStyle = "red";
+    ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+  }
+
+  function endDrawing(e) {
+    isDrawing = false;
+    // Record coordinates of rectangle
+    console.log(rect);
+  }
+</script>
