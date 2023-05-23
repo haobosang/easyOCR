@@ -34,7 +34,7 @@ for i in range(20):
     product_count5 = fake.random_int(min=1, max=100)
 
     data.append({
-        "block": 2,
+        "block": 0,
         "height": 35,
         "left": 1083,
         "line": 1,
@@ -48,7 +48,7 @@ for i in range(20):
         "backcolor": "#FFFFFF"
     })
     data.append({
-         "block": 2,
+         "block": 0,
         "height": 35,
         "left": 1083,
         "line": 1,
@@ -62,7 +62,7 @@ for i in range(20):
         "backcolor": "#FFFFFF"
     })
     data.append({
-        "block": 2,
+        "block": 0,
         "height": 45,
         "left": 308,
         "line": 1,
@@ -76,7 +76,7 @@ for i in range(20):
         "backcolor": "#FFFFFF"
     })
     data.append({
-        "block": 2,
+        "block": 0,
         "height": 35,
         "left": 244,
         "line": 1,
@@ -90,7 +90,7 @@ for i in range(20):
         "backcolor": "#FFFFFF"
     })
     data.append({
-        "block": 2,
+        "block": 0,
         "height": 35,
         "left": 376,
         "line": 2,
@@ -104,36 +104,36 @@ for i in range(20):
         "backcolor": "#FFFFFF"
     })
     data.append({
-        "block": 3,
-            "height": 35,
-            "left": 242,
-            "line": 1,
-            "page": 1,
-            "text": "下記",
-            "top": 446,
-            "width": 50,
-            "word": 1,
-            "fontsize": 24,
-            "fontcolor": "#000000",
-            "backcolor": "#FFFFFF"
+        "block": 0,
+        "height": 35,
+        "left": 242,
+        "line": 1,
+        "page": 1,
+        "text": "下記",
+        "top": 446,
+        "width": 50,
+        "word": 1,
+        "fontsize": 24,
+        "fontcolor": "#000000",
+        "backcolor": "#FFFFFF"
     })
     data.append({
-         "block": 3,
-            "height": 35,
-            "left": 290,
-            "line": 1,
-            "page": 1,
-            "text": "の通りご請求申し上げます。",
-            "top": 446,
-            "width": 480,
-            "word": 2,
-            "fontsize": 24,
-            "fontcolor": "#000000",
-            "backcolor": "#FFFFFF"
+        "block": 0,
+        "height": 35,
+        "left": 290,
+        "line": 1,
+        "page": 1,
+        "text": "の通りご請求申し上げます。",
+        "top": 446,
+        "width": 480,
+        "word": 2,
+        "fontsize": 24,
+        "fontcolor": "#000000",
+        "backcolor": "#FFFFFF"
     })
 
     data.append({
-        "block": 4,
+        "block": 0,
         "height": 35,
         "left": 317,
         "line": 1,
@@ -219,17 +219,17 @@ for i in range(20):
     })
     data.append({
         "block": 5,
-            "height": 30,
-            "left": 445,
-            "line": 3,
-            "page": 1,
-            "text": "の取付作業",
-            "top": 750,
-            "width": 200,
-            "word": 8,
-            "fontsize": 22,
-            "fontcolor": "#000000",
-            "backcolor": "#FFFFFF"
+        "height": 30,
+        "left": 445,
+        "line": 3,
+        "page": 1,
+        "text": "の取付作業",
+        "top": 750,
+        "width": 200,
+        "word": 8,
+        "fontsize": 22,
+        "fontcolor": "#000000",
+        "backcolor": "#FFFFFF"
     })
     data.append({
         "block": 5,
@@ -286,20 +286,6 @@ for i in range(20):
         "fontsize": 22,
         "fontcolor": "#000000",
         "backcolor": "#D9E2F1"
-    })
-    data.append({
-        "block": 5,
-        "height": 30,
-        "left": 298,
-        "line": 5,
-        "page": 1,
-        "text": "ロロロロ",
-        "top": 840,
-        "width": 470,
-        "word": 1,
-        "fontsize": 22,
-        "fontcolor": "#000000",
-        "backcolor": "#FFFFFF"
     })
     data.append({
         "block": 5,
