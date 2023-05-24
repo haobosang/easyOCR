@@ -169,7 +169,7 @@ def train(opt):
 
         model.zero_grad()
         cost.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), opt.grad_clip)  # gradient clipping with 5 (Default)
+        torch.nn.utils.clip_grad.clip_grad_norm_(model.parameters(), opt.grad_clip)  # gradient clipping with 5 (Default)
         optimizer.step()
 
         loss_avg.add(cost)
@@ -219,8 +219,8 @@ def train(opt):
                 log.write(loss_model_log + '\n')
 
                 # show some predicted results
-                dashed_line = '-' * 80
-                head = '{:25s} | {:25s} | Confidence Score & T/F'.format("Ground Truth", "Prediction")
+                dashed_line = '-' * 110
+                head = '{:40s} | {:40s} | Confidence Score & T/F'.format("Ground Truth", "Prediction")
                 predicted_result_log = '{}\n{}\n{}\n'.format(dashed_line, head, dashed_line)
                 
                 for gt, pred, confidence in zip(labels[:5], preds[:5], confidence_score[:5]):
@@ -229,8 +229,8 @@ def train(opt):
                         pred = pred[:pred.find('[s]')]
 
                     predicted_result_log += '{:s} | {:s} | {:0.4f}\t{}\n'.format(
-                        gt + " " * (25 - len(gt.encode("sjis"))),
-                        pred + " " * (25 - len(pred.encode("sjis"))),
+                        gt + " " * (40 - len(gt.encode("sjis"))),
+                        pred + " " * (40 - len(pred.encode("sjis"))),
                         confidence,
                         str(pred == gt)
                     )
@@ -297,6 +297,22 @@ if __name__ == '__main__':
     parser.add_argument('--hidden_size', type=int, default=256, help='the size of the LSTM hidden state')
 
     cfg = parser.parse_args()
+    
+    # -------------------------------------- PM ----------------------------------------- #
+    cfg.train_data = "./lmdb/training"
+    cfg.valid_data = "./lmdb/validation"
+    cfg.Transformation = "None"  # [ None | TPS ]
+    cfg.FeatureExtraction = "VGG"  # [ VGG | ResNet ]
+    cfg.SequenceModeling = "BiLSTM"  
+    cfg.Prediction = "CTC"  # [ CTC | Attn ]
+    cfg.num_iter = 100000
+    cfg.valInterval = 50
+    cfg.FT = True
+    
+    with open('./ja_char.txt', 'r') as f:
+        text = f.read()
+        cfg.character = "0123456789abcdefghijklmnopqrstuvwxyz" + text
+    # ------------------------------------- END ----------------------------------------- #
 
     if not cfg.exp_name:
         cfg.exp_name = '{}-{}-{}-{}'.format(
@@ -307,6 +323,10 @@ if __name__ == '__main__':
         )
         cfg.exp_name += '-Seed{}'.format(cfg.manualSeed)
         # print(cfg.exp_name)
+        # ----------------------------------- PM ------------------------------------------
+        if os.path.exists("./saved_models/{}/best_accuracy.pth".format(cfg.exp_name)):
+            cfg.saved_model = "./saved_models/{}/best_accuracy.pth".format(cfg.exp_name)
+        # ----------------------------------- END -----------------------------------------
 
     os.makedirs('./saved_models/{}'.format(cfg.exp_name), exist_ok=True)
 
@@ -340,18 +360,5 @@ if __name__ == '__main__':
         If you dont care about it, just commnet out these line.)
         cfg.num_iter = int(cfg.num_iter / cfg.num_gpu)
         """
-    # -------------------------------------- PM ----------------------------------------- #
-    cfg.train_data = "./lmdb/training"
-    cfg.valid_data = "./lmdb/validation"
-    cfg.Transformation = "TPS"
-    cfg.FeatureExtraction = "ResNet"
-    cfg.SequenceModeling = "BiLSTM"
-    cfg.Prediction = "Attn"
-    cfg.character = "0123456789ぁあぃいぅうぇえぉおかがきぎくぐけげこごさざしじすずせぜそぞただちぢっつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもゃやゅゆょよらりるれろゎわゐゑをんゔゕゖ゙゚゛゜ゝゞゟ゠ァアィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモャヤュユョヨラリルレロヮワヰヱヲンヴヵヶヷヸヹヺ・ーヽヾヿ･ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝﾞﾟㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇺㇻㇼㇽㇾㇿ𛀀𛀁"
-    # cfg.saved_model = "./saved_models/TPS-ResNet-BiLSTM-Attn-Seed1111/best_accuracy.pth"
-    cfg.num_iter = 10000
-    cfg.valInterval = 20
-    cfg.FT = True
-    # ----------------------------------------------------------------------------------- #
 
     train(cfg)

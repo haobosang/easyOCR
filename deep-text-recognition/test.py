@@ -85,6 +85,10 @@ def validation(model, criterion, evaluation_loader, converter, opt):
     length_of_data = 0
     infer_time = 0
     valid_loss_avg = Averager()
+    
+    preds_str = ""
+    confidence_score_list = []
+    labels = ""
 
     for i, (image_tensors, labels) in enumerate(evaluation_loader):
         batch_size = image_tensors.size(0)
@@ -136,7 +140,7 @@ def validation(model, criterion, evaluation_loader, converter, opt):
         # calculate accuracy & confidence score
         preds_prob = F.softmax(preds, dim=2)
         preds_max_prob, _ = preds_prob.max(dim=2)
-        confidence_score_list = []
+        
         for gt, pred, pred_max_prob in zip(labels, preds_str, preds_max_prob):
             if 'Attn' in opt.Prediction:
                 gt = gt[:gt.find('[s]')]
@@ -224,6 +228,7 @@ def test(opt):
     with torch.no_grad():
         if opt.benchmark_all_eval:  # evaluation with 10 benchmark evaluation datasets
             benchmark_all_eval(model, criterion, converter, opt)
+            print("[ PM for Debug ] ", opt.eval_data)
         else:
             log = open(f'./result/{opt.exp_name}/log_evaluation.txt', 'a')
             AlignCollate_evaluation = AlignCollate(imgH=opt.imgH, imgW=opt.imgW, keep_ratio_with_pad=opt.PAD)
@@ -243,11 +248,11 @@ def test(opt):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--eval_data', required=True, help='path to evaluation dataset')
+    parser.add_argument('--eval_data', help='path to evaluation dataset')
     parser.add_argument('--benchmark_all_eval', action='store_true', help='evaluate 10 benchmark evaluation datasets')
     parser.add_argument('--workers', type=int, help='number of data loading workers', default=4)
     parser.add_argument('--batch_size', type=int, default=192, help='input batch size')
-    parser.add_argument('--saved_model', required=True, help="path to saved_model to evaluation")
+    parser.add_argument('--saved_model', help="path to saved_model to evaluation")
     """ Data processing """
     parser.add_argument('--batch_max_length', type=int, default=25, help='maximum-label-length')
     parser.add_argument('--imgH', type=int, default=32, help='the height of the input image')
@@ -259,10 +264,10 @@ if __name__ == '__main__':
     parser.add_argument('--data_filtering_off', action='store_true', help='for data_filtering_off mode')
     parser.add_argument('--baiduCTC', action='store_true', help='for data_filtering_off mode')
     """ Model Architecture """
-    parser.add_argument('--Transformation', type=str, required=True, help='Transformation stage. None|TPS')
-    parser.add_argument('--FeatureExtraction', type=str, required=True, help='FeatureExtraction stage. VGG|RCNN|ResNet')
-    parser.add_argument('--SequenceModeling', type=str, required=True, help='SequenceModeling stage. None|BiLSTM')
-    parser.add_argument('--Prediction', type=str, required=True, help='Prediction stage. CTC|Attn')
+    parser.add_argument('--Transformation', type=str, help='Transformation stage. None|TPS')
+    parser.add_argument('--FeatureExtraction', type=str, help='FeatureExtraction stage. VGG|RCNN|ResNet')
+    parser.add_argument('--SequenceModeling', type=str, help='SequenceModeling stage. None|BiLSTM')
+    parser.add_argument('--Prediction', type=str, help='Prediction stage. CTC|Attn')
     parser.add_argument('--num_fiducial', type=int, default=20, help='number of fiducial points of TPS-STN')
     parser.add_argument('--input_channel', type=int, default=1, help='the number of input channel of Feature extractor')
     parser.add_argument('--output_channel', type=int, default=512,
@@ -270,6 +275,20 @@ if __name__ == '__main__':
     parser.add_argument('--hidden_size', type=int, default=256, help='the size of the LSTM hidden state')
 
     opt = parser.parse_args()
+    
+    # ----------------------- PM --------------------------
+    opt.eval_data = "./lmdb/evaluation"
+    opt.benchmark_all_eval = False
+    opt.Transformation = "TPS"  # [ None | TPS ] 
+    opt.FeatureExtraction = "ResNet"  # [ VGG | ResNet ]
+    opt.SequenceModeling = "BiLSTM"  
+    opt.Prediction = "Attn"  # [ CTC | Attn ]
+    opt.saved_model = "saved_models/{}-{}-{}-{}-Seed1111/best_accuracy.pth".format(opt.Transformation, opt.FeatureExtraction, opt.SequenceModeling, opt.Prediction)
+    
+    with open("./ja_char.txt", 'r') as f:
+        text = f.read()
+        opt.character = "0123456789abcdefghijklmnopqrstuvwxyz" + text
+    # -----------------------------------------------------
 
     """ vocab / character number configuration """
     if opt.sensitive:
@@ -280,3 +299,6 @@ if __name__ == '__main__':
     opt.num_gpu = torch.cuda.device_count()
 
     test(opt)
+    
+    # TPS-ResNet-BiLSTM-Attn-Seed1111 num_iter=10,000 Acc=74.290
+    # None-VGG-BiLSTM-CTC-Seed1111 num_iter=10,000 Acc=?
