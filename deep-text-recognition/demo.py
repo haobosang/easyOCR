@@ -9,6 +9,9 @@ import torch.nn.functional as F
 from utils import CTCLabelConverter, AttnLabelConverter
 from dataset import RawDataset, AlignCollate
 from model import Model
+
+
+# device = torch.device('cpu')
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
@@ -19,6 +22,7 @@ def demo(opt):
     else:
         converter = AttnLabelConverter(opt.character)
     opt.num_class = len(converter.character)
+    print("[ PM for Debug ]", opt.num_class)
 
     if opt.rgb:
         opt.input_channel = 3
@@ -67,13 +71,11 @@ def demo(opt):
                 _, preds_index = preds.max(2)
                 preds_str = converter.decode(preds_index, length_for_pred)
 
-
-            log = open(f'./log_demo_result.txt', 'a')
+            log = open('./log_demo_result.txt', 'a')
             dashed_line = '-' * 80
-            head = f'{"image_path":25s}\t{"predicted_labels":25s}\tconfidence score'
-            
-            print(f'{dashed_line}\n{head}\n{dashed_line}')
-            log.write(f'{dashed_line}\n{head}\n{dashed_line}\n')
+            head = '{:25s}\t{:25s}\tconfidence score'.format("image_path", "predicted_labels")
+            print('{}\n{}\n{}'.format(dashed_line, head, dashed_line))
+            log.write('{}\n{}\n{}\n'.format(dashed_line, head, dashed_line))
 
             preds_prob = F.softmax(preds, dim=2)
             preds_max_prob, _ = preds_prob.max(dim=2)
@@ -86,30 +88,35 @@ def demo(opt):
                 # calculate confidence score (= multiply of pred_max_prob)
                 confidence_score = pred_max_prob.cumprod(dim=0)[-1]
 
-                print(f'{img_name:25s}\t{pred:25s}\t{confidence_score:0.4f}')
-                log.write(f'{img_name:25s}\t{pred:25s}\t{confidence_score:0.4f}\n')
+                print('{:25s}\t{:25s}\t{:0.4f}'.format(img_name, pred, confidence_score))
+                log.write('{:25s}\t{:25s}\t{:0.4f}\n'.format(img_name, pred, confidence_score))
 
             log.close()
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--image_folder', required=True, help='path to image_folder which contains text images')
+    parser.add_argument('--image_folder', help='path to image_folder which contains text images')
     parser.add_argument('--workers', type=int, help='number of data loading workers', default=4)
     parser.add_argument('--batch_size', type=int, default=192, help='input batch size')
-    parser.add_argument('--saved_model', required=True, help="path to saved_model to evaluation")
-    """ Data processing """
-    parser.add_argument('--batch_max_length', type=int, default=25, help='maximum-label-length')
+    parser.add_argument('--saved_model', help="path to saved_model to evaluation")
+
+    # Data processing
+    parser.add_argument('--batch_max_length', type=int, default=25,
+                        help='maximum-label-length')
     parser.add_argument('--imgH', type=int, default=32, help='the height of the input image')
     parser.add_argument('--imgW', type=int, default=100, help='the width of the input image')
     parser.add_argument('--rgb', action='store_true', help='use rgb input')
-    parser.add_argument('--character', type=str, default='0123456789abcdefghijklmnopqrstuvwxyz', help='character label')
+    parser.add_argument('--character', type=str, default='0123456789ぁあぃいぅうぇえぉおかがきぎくぐけげこごさざしじすずせぜそぞただちぢっつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもゃやゅゆょよらりるれろゎわゐゑをんゔゕゖ゙゚゛゜ゝゞゟ゠ァアィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモャヤュユョヨラリルレロヮワヰヱヲンヴヵヶヷヸヹヺ・ーヽヾヿ･ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝﾞﾟㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇺㇻㇼㇽㇾㇿ𛀀𛀁',
+                        help='character label')
     parser.add_argument('--sensitive', action='store_true', help='for sensitive character mode')
     parser.add_argument('--PAD', action='store_true', help='whether to keep ratio then pad for image resize')
-    """ Model Architecture """
-    parser.add_argument('--Transformation', type=str, required=True, help='Transformation stage. None|TPS')
-    parser.add_argument('--FeatureExtraction', type=str, required=True, help='FeatureExtraction stage. VGG|RCNN|ResNet')
-    parser.add_argument('--SequenceModeling', type=str, required=True, help='SequenceModeling stage. None|BiLSTM')
-    parser.add_argument('--Prediction', type=str, required=True, help='Prediction stage. CTC|Attn')
+
+    # Model Architecture
+    parser.add_argument('--Transformation', type=str, help='Transformation stage. None|TPS')
+    parser.add_argument('--FeatureExtraction', type=str, help='FeatureExtraction stage. VGG|RCNN|ResNet')
+    parser.add_argument('--SequenceModeling', type=str, help='SequenceModeling stage. None|BiLSTM')
+    parser.add_argument('--Prediction', type=str,  help='Prediction stage. CTC|Attn')
     parser.add_argument('--num_fiducial', type=int, default=20, help='number of fiducial points of TPS-STN')
     parser.add_argument('--input_channel', type=int, default=1, help='the number of input channel of Feature extractor')
     parser.add_argument('--output_channel', type=int, default=512,
@@ -122,8 +129,17 @@ if __name__ == '__main__':
     if opt.sensitive:
         opt.character = string.printable[:-6]  # same with ASTER setting (use 94 char).
 
-    cudnn.benchmark = True
-    cudnn.deterministic = True
+    # cudnn.benchmark = True
+    cudnn.benchmark = False
+    # cudnn.deterministic = True
+    cudnn.deterministic = False
     opt.num_gpu = torch.cuda.device_count()
+    
+    opt.Transformation = "None"
+    opt.FeatureExtraction = "VGG"
+    opt.SequenceModeling = "BiLSTM"
+    opt.Prediction = "CTC"
+    opt.image_folder = "./testImages/"
+    opt.saved_model = "./saved_models/None-VGG-BiLSTM-CTC-Seed1111/best_accuracy.pth"
 
     demo(opt)

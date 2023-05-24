@@ -65,6 +65,7 @@ class Batch_Balanced_Dataset(object):
                 shuffle=True,
                 num_workers=int(opt.workers),
                 collate_fn=_AlignCollate, pin_memory=True)
+            print("[ PM for Debug ] ", len(_data_loader))
             self.data_loader_list.append(_data_loader)
             self.dataloader_iter_list.append(iter(_data_loader))
 
@@ -84,12 +85,12 @@ class Batch_Balanced_Dataset(object):
 
         for i, data_loader_iter in enumerate(self.dataloader_iter_list):
             try:
-                image, text = data_loader_iter.next()
+                image, text = next(data_loader_iter)
                 balanced_batch_images.append(image)
                 balanced_batch_texts += text
             except StopIteration:
                 self.dataloader_iter_list[i] = iter(self.data_loader_list[i])
-                image, text = self.dataloader_iter_list[i].next()
+                image, text = next(self.dataloader_iter_list[i])
                 balanced_batch_images.append(image)
                 balanced_batch_texts += text
             except ValueError:
@@ -107,20 +108,26 @@ def hierarchical_dataset(root, opt, select_data='/'):
     print(dataset_log)
     dataset_log += '\n'
     for dirpath, dirnames, filenames in os.walk(root+'/'):
+        # print("[ PM for Debug ] {}\t{}\t{}".format(dirpath, dirnames, filenames))
         if not dirnames:
+            # print("[ PM for Debug ] 进入到文件夹 if 判断")
             select_flag = False
             for selected_d in select_data:
+                # print("[ PM for Debug ] {}".format(select_data))
+                # print("[ PM for Debug ] {} 在 {} 中吗？".format(selected_d, dirpath))
                 if selected_d in dirpath:
                     select_flag = True
                     break
 
             if select_flag:
-                dataset = LmdbDataset(dirpath, opt)
+                # print("[ PM for Debug ] 正在获取 lmdbDataset 数据集")
+                dataset = LmdbDataset(dirpath, opt)  # dipath = "./lmdb/training/MJ" 
                 sub_dataset_log = f'sub-directory:\t/{os.path.relpath(dirpath, root)}\t num samples: {len(dataset)}'
                 print(sub_dataset_log)
                 dataset_log += f'{sub_dataset_log}\n'
                 dataset_list.append(dataset)
-
+                
+    # print("[ PM for Debug ] ", len(dataset_list))
     concatenated_dataset = ConcatDataset(dataset_list)
 
     return concatenated_dataset, dataset_log
@@ -130,19 +137,22 @@ class LmdbDataset(Dataset):
 
     def __init__(self, root, opt):
 
-        self.root = root
+        self.root = root   # "./lmdb/training/MJ"
         self.opt = opt
         self.env = lmdb.open(root, max_readers=32, readonly=True, lock=False, readahead=False, meminit=False)
+        # print("[ PM for Debug ] {}\n".format(self.env))
         if not self.env:
             print('cannot create lmdb from %s' % (root))
             sys.exit(0)
 
         with self.env.begin(write=False) as txn:
-            nSamples = int(txn.get('num-samples'.encode()))
+            nSamples = int(txn.get('num-samples'.encode()))  # 684
+            # print("[ PM for Debug ] {}\n".format(nSamples))
             self.nSamples = nSamples
 
             if self.opt.data_filtering_off:
                 # for fast check or benchmark evaluation with no filtering
+                print("\n[ PM for Debug ] {}\n".format("生成过滤列表"))
                 self.filtered_index_list = [index + 1 for index in range(self.nSamples)]
             else:
                 """ Filtering part
@@ -159,7 +169,7 @@ class LmdbDataset(Dataset):
                     index += 1  # lmdb starts with 1
                     label_key = 'label-%09d'.encode() % index
                     label = txn.get(label_key).decode('utf-8')
-
+                    # print("[ PM for Debug ] {}".format(label))
                     if len(label) > self.opt.batch_max_length:
                         # print(f'The length of the label is longer than max_length: length
                         # {len(label)}, {label} in dataset {self.root}')
@@ -167,9 +177,12 @@ class LmdbDataset(Dataset):
 
                     # By default, images containing characters which are not in opt.character are filtered.
                     # You can add [UNK] token to `opt.character` in utils.py instead of this filtering.
-                    out_of_char = f'[^{self.opt.character}]'
-                    if re.search(out_of_char, label.lower()):
-                        continue
+                    
+                    # --------------------- PM ------------------- #
+                    # out_of_char = f'[^{self.opt.character}]'   # |  # 这里不能使用过滤出英文字符，识别日文时会出现样本量 nSample = 0 的情况。
+                    # if re.search(out_of_char, label.lower()):  # |
+                    #     continue                               # |
+                    # -------------------------------------------- #
 
                     self.filtered_index_list.append(index)
 

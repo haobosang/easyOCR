@@ -17,15 +17,15 @@ def main():
     json_dir = glob.glob(".\\fakeLabel\\*.json")
     for json_file in json_dir:
         # 创建背板
-        template = Image.open(".\\img\\2.png")
+        template = Image.open(".\\template_img\\2.png")
         draw = ImageDraw.Draw(template)
 
-        print(f"Loaded {json_file}")
+        print("Loaded {}".format(json_file))
         j_name = json_file.split('\\')[-1].split('.')[0]
-        with open(f'fakeLabel/{j_name}.json', 'r', encoding="utf-8") as file:
+        with open('fakeLabel/{}.json'.format(j_name), 'r', encoding="utf-8") as file:
             fstr = file.read()
             fakeData = json.loads(fstr)
-            data = fakeData["data"]
+            data = dict(fakeData["data"])
             for fd in data:
                 # 添加标题
                 font = ImageFont.truetype('meiryo.ttc', size=fd["fontsize"], encoding='Shift_JIS')
@@ -39,8 +39,8 @@ def main():
 
             # 保存图片, 这里可以使用 csv 中 image_name 域获取字符串
             img_name = j_name.replace("label", "image")
-            print(f'Generated ./fakeImage/{img_name}.png !\n')
-            template.save(f'./fakeImage/{img_name}.png')
+            print('Generated ./fakeImage/{}.png !\n'.format(img_name))
+            template.save('./fakeImage/{}.png'.format(img_name))
 
             file.close()
 

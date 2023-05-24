@@ -27,7 +27,7 @@ def writeCache(env, cache):
             txn.put(k, v)
 
 
-def createDataset(inputPath, gtFile, outputPath, checkValid=True):
+def createDataset(inputPath="./output", gtFile="./output/gt.txt", outputPath="./output", checkValid=True):
     """
     Create LMDB dataset for training and evaluation.
     ARGS:
@@ -82,7 +82,24 @@ def createDataset(inputPath, gtFile, outputPath, checkValid=True):
     nSamples = cnt-1
     cache['num-samples'.encode()] = str(nSamples).encode()
     writeCache(env, cache)
-    print('Created dataset with %d samples' % nSamples)
+    # print('Created dataset with %d samples' % nSamples)
+    print('[ PM ] Created dataset to ./result with %d samples' % nSamples)
+
+
+def readDataset(path="./lmdb/training/MJ/"):
+    env = lmdb.open(path, readonly=True)
+
+    # 打开事务
+    with env.begin() as txn:
+        # 打开游标
+        cursor = txn.cursor()
+        # 遍历数据库
+        for key, value in cursor:
+            # 解码键和值
+            key = key.decode('utf-8')
+            value = np.frombuffer(value, dtype=np.uint8)
+            # 处理数据
+            print(key, value)
 
 
 def InvoiceDataset(root="~/pm"):
@@ -118,14 +135,22 @@ def InvoiceDataset(root="~/pm"):
         img = Image.open("{}/fakeImage/{}.png".format(root, image_name)).convert('RGB')
         img_block = img.crop((left, top, right, bottom))
 
-        img_block.save("./data/test/word_{:03d}.png".format(index))
-        new_img_name = "test/word_{:03d}.png".format(index)
+        img_block.save("./output/images/image_{:05d}.png".format(index))
+        new_img_name = "images/image_{:05d}.png".format(index)
         print("{}\t{}".format(new_img_name, text))
         label_list.append(np.array("{}\t{}".format(new_img_name, text)))
 
-    np.savetxt("./data/gt.txt", np.array(label_list), delimiter=' ', fmt='%s')
+    np.savetxt("./output/gt.txt", np.array(label_list), delimiter=' ', fmt='%s')
+
+    print("[ PM ] cropped from ../fakeImage/ to ./output/images/*.png !")
+    print("[ PM ] created ./output/gt.txt !")
 
 
 if __name__ == '__main__':
     # InvoiceDataset("..")
     fire.Fire(createDataset)
+    # fire.Fire(readDataset)
+    
+    # for file in $(ls | grep 'word_'); do
+    # mv "$file" "${file/word_/image_00}"
+    # done

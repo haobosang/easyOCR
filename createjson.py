@@ -206,7 +206,7 @@ def createcsv(num=20):
     data_list = []
     print("Converting to csv: [", end='')
     for i in range(num):
-        json_file = f"./fakeLabel/label{i}.json"
+        json_file = "./fakeLabel/label{}.json".format(i)
         filename = json_file.split("/")[-1].split(".")[0]
         with open(json_file, "r") as f:
             json_data = json.load(f)
@@ -224,7 +224,7 @@ def createcsv(num=20):
                                   "text": text})
             f.close()
 
-        print('.', end='')
+        print('=', end='')
     print("] Done!")
 
     with open("./fakeLabel/label.csv", "w", newline="", encoding="Shift_JIS") as f:
