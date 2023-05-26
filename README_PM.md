@@ -81,4 +81,5 @@ with open('./ja_char.txt', 'r') as f:
 | TPS-ResNet-BiLSTM-Attn-Seed1111 | 10,000 | 100.000 |
 | None-VGG-BiLSTM-CTC-Seed1111 | 10,000 | 74.290 |
 | None-VGG-BiLSTM-CTC-Seed1111 | 100,000 | 74.439 |
+
 结果日志文件均在 ```result``` 文件中。
