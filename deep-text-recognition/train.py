@@ -301,17 +301,17 @@ if __name__ == '__main__':
     # -------------------------------------- PM ----------------------------------------- #
     cfg.train_data = "./lmdb/training"
     cfg.valid_data = "./lmdb/validation"
-    cfg.Transformation = "None"  # [ None | TPS ]
-    cfg.FeatureExtraction = "VGG"  # [ VGG | ResNet ]
+    cfg.Transformation = "TPS"  # [ None | TPS ]
+    cfg.FeatureExtraction = "ResNet"  # [ VGG | ResNet ]
     cfg.SequenceModeling = "BiLSTM"  
-    cfg.Prediction = "CTC"  # [ CTC | Attn ]
-    cfg.num_iter = 100000
+    cfg.Prediction = "Attn"  # [ CTC | Attn ]
+    cfg.num_iter = 10000
     cfg.valInterval = 50
     cfg.FT = True
     
     with open('./ja_char.txt', 'r') as f:
         text = f.read()
-        cfg.character = "0123456789abcdefghijklmnopqrstuvwxyz" + text
+        cfg.character = "0123456789.abcdefghijklmnopqrstuvwxyz" + text
     # ------------------------------------- END ----------------------------------------- #
 
     if not cfg.exp_name:
@@ -324,8 +324,8 @@ if __name__ == '__main__':
         cfg.exp_name += '-Seed{}'.format(cfg.manualSeed)
         # print(cfg.exp_name)
         # ----------------------------------- PM ------------------------------------------
-        if os.path.exists("./saved_models/{}/best_accuracy.pth".format(cfg.exp_name)):
-            cfg.saved_model = "./saved_models/{}/best_accuracy.pth".format(cfg.exp_name)
+        # if os.path.exists("./saved_models/{}/best_accuracy.pth".format(cfg.exp_name)):
+        #     cfg.saved_model = "./saved_models/{}/best_accuracy.pth".format(cfg.exp_name)
         # ----------------------------------- END -----------------------------------------
 
     os.makedirs('./saved_models/{}'.format(cfg.exp_name), exist_ok=True)

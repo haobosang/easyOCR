@@ -135,15 +135,15 @@ if __name__ == '__main__':
     cudnn.deterministic = False
     opt.num_gpu = torch.cuda.device_count()
     
-    opt.Transformation = "None"
-    opt.FeatureExtraction = "VGG"
+    opt.Transformation = "TPS"
+    opt.FeatureExtraction = "ResNet"
     opt.SequenceModeling = "BiLSTM"
-    opt.Prediction = "CTC"
-    opt.image_folder = "./testImages/"
+    opt.Prediction = "Attn"
+    opt.image_folder = "./demo_image"
     opt.saved_model = "saved_models/{}-{}-{}-{}-Seed1111/best_accuracy.pth".format(opt.Transformation, opt.FeatureExtraction, opt.SequenceModeling, opt.Prediction)
     
     with open('./ja_char.txt', 'r') as f:
         text = f.read()
-        opt.character = "0123456789abcdefghijklmnopqrstuvwxyz" + text
+        opt.character = "0123456789.abcdefghijklmnopqrstuvwxyz" + text
 
     demo(opt)

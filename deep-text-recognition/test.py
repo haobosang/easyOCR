@@ -287,7 +287,7 @@ if __name__ == '__main__':
     
     with open("./ja_char.txt", 'r') as f:
         text = f.read()
-        opt.character = "0123456789abcdefghijklmnopqrstuvwxyz" + text
+        opt.character = "0123456789.abcdefghijklmnopqrstuvwxyz" + text
     # -----------------------------------------------------
 
     """ vocab / character number configuration """
@@ -300,5 +300,6 @@ if __name__ == '__main__':
 
     test(opt)
     
-    # TPS-ResNet-BiLSTM-Attn-Seed1111 num_iter=10,000 Acc=74.290
-    # None-VGG-BiLSTM-CTC-Seed1111 num_iter=10,000 Acc=?
+    # TPS-ResNet-BiLSTM-Attn-Seed1111 num_iter=10,000 Acc=100
+    # None-VGG-BiLSTM-CTC-Seed1111 num_iter=10,000 Acc=74.290
+    # None-VGG-BiLSTM-CTC-Seed1111 num_iter=100,000 Acc=74.439
